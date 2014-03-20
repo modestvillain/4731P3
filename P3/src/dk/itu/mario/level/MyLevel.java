@@ -72,8 +72,8 @@ public class MyLevel extends Level{
             else {
                 length += buildStraight(length, width-length, false);
             }
-            length += buildArch(length, width - length); 
             length += buildLedge(length, width - length);
+            length += buildArch(length, width - length);
         }
 
         //set the end piece
