@@ -16,6 +16,7 @@ public class MyLevel extends Level{
     public   int BLOCKS_COINS = 0; // the number of coin blocks
     public   int BLOCKS_POWER = 0; // the number of power blocks
     public   int COINS = 0; //These are the coins in boxes that Mario collect
+    public   int FLOOR = height-1;
 
     private static GamePlay pm;
 	private static Random levelSeedRandom = new Random();
@@ -62,8 +63,8 @@ public class MyLevel extends Level{
 //            length += buildLedge(length, width - length);
 //            length += buildTubes(length, width-length);
 //            length += buildCannons(length, width-length);
-            int num = random.nextInt(5);
-            if (num < 2) {
+            int num = random.nextInt(6);
+            if (num < 3) {
                 length += buildHillStraight(length, width - length);
                 if (num == 0) {
                     length += buildIsland(length, width - length);
@@ -71,9 +72,13 @@ public class MyLevel extends Level{
             }
             else {
                 length += buildStraight(length, width-length, false);
+                if (random.nextInt(5)<2) {
+                    length += buildLedge(length, width - length);
+                }
+                if (random.nextInt(5)<2) {
+                    length += buildArch(length, width - length);
+                }
             }
-            length += buildLedge(length, width - length);
-            length += buildArch(length, width - length);
         }
 
         //set the end piece
@@ -224,13 +229,15 @@ public class MyLevel extends Level{
         int floor = height - 1 - random.nextInt(2);
         if (floor > height-1) floor = height-2;
 
-        for (int x = xo; x < xo + length; x++)        /* ALWAYS CREATES A ONE TILE GAP*/
+        FLOOR = floor;
+
+        for (int x = xo; x < xo + length; x++)
         {
-            for(int y=height; y>floor-1; y--)               /* FILL GROUND UNDERNEATH ISLAND */
+            for(int y=height; y>floor-1; y--)               /* FILL GROUND UNDERNEATH ARCH */
             {
                 setBlock(x,y,GROUND);
             }
-            for(int y=floor-1; y>floor-4; y--)               /* FILL GROUND UNDERNEATH ISLAND */
+            for(int y=floor-1; y>floor-4; y--)               /* CREATE ARCH */
             {
                 if (x==xo+3 || x==xo+7)
                     setBlock(x,y,BLOCK_EMPTY);
@@ -242,28 +249,8 @@ public class MyLevel extends Level{
                 }
             }
         }
-        setSpriteTemplate(xo,floor-1,new SpriteTemplate(Enemy.ENEMY_GREEN_KOOPA,false));
-//        if(random.nextInt(3)==0)                            /* ADD BLOCKS */
-//        {
-//            int block_height = island-3;
-//            for(int x = xo+1; x < xo + length - 1; x++)
-//            {
-//                switch(random.nextInt(5)) {
-//                    case 0: setBlock(x,block_height,BLOCK_COIN); break;
-//                    case 1: setBlock(x,block_height,BLOCK_POWERUP); break;
-//                    default: setBlock(x,block_height,BLOCK_EMPTY);
-//                }
-//            }
-//        }
-//
-//        int coin_height = floor-1;
-//        for(int x = xo+1; x < xo + length - 1; x++)     /* ADD COINS */
-//        {
-//            switch(random.nextInt(2)) {
-//                case 0: setBlock(x,coin_height,COIN); break;
-//                default: break;
-//            }
-//        }
+
+        setSpriteTemplate(xo,floor-1,new SpriteTemplate(Enemy.ENEMY_GREEN_KOOPA,false));    /* ADD KOOPA FOR BRICK BREAKING */
 
         return length;
     }
@@ -276,9 +263,11 @@ public class MyLevel extends Level{
         int floor = height - 1 - random.nextInt(5);
         if (floor > height-1) floor = height-2;
 
-        int island = floor - 3 - random.nextInt(2);
+        floor=FLOOR;
 
-        for (int x = xo+1; x < xo + length - 1; x++)        /* ALWAYS CREATES A ONE TILE GAP*/
+        int island = floor - 4 - random.nextInt(2);
+
+        for (int x = xo+1; x < xo + length - 1; x++)              /* ALWAYS CREATES A ONE TILE GAP*/
         {
             if (island > 0)
             {
@@ -289,6 +278,10 @@ public class MyLevel extends Level{
                     addEnemyLine(xo+1, xo + length -1 , island - 1);
                 }
             }
+        }
+
+        for (int x = xo; x < xo + length; x++)              /* ALWAYS CREATES A ONE TILE GAP*/
+        {
             for(int y=height; y>floor-1; y--)               /* FILL GROUND UNDERNEATH ISLAND */
             {
                 setBlock(x,y,GROUND);
@@ -328,6 +321,8 @@ public class MyLevel extends Level{
         if (length > maxLength) length = maxLength;
 
         int floor = height - 1 - random.nextInt(3);
+        FLOOR = floor;
+
         int maxH = floor - 4 - random.nextInt(2);
         int off=0;
         for(int y=maxH; y<floor; y++) {
@@ -367,6 +362,8 @@ public class MyLevel extends Level{
         if (length > maxLength) length = maxLength;
 
         int floor = height - 1 - random.nextInt(4);
+        FLOOR = floor;
+
         for (int x = xo; x < xo + length; x++)
         {
             for (int y = 0; y < height; y++)
@@ -524,6 +521,7 @@ public class MyLevel extends Level{
             length = maxLength;
 
         int floor = height - 1 - random.nextInt(4);
+        FLOOR = floor;
 
         //runs from the specified x position to the length of the segment
         for (int x = xo; x < xo + length; x++)
